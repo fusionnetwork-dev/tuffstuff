@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alucard - Powering Imagination</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #f2f2f2;
+            --secondary-bg: white;
+            --accent-color: #ff0000;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        /* Dark theme */
+        [data-theme="dark"] {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444;
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: 10px;
+            top: 70px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 4px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff0000, #8B0000, #000000);
+            color: white;
+            padding: 0;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            border-bottom: 2px solid #ff0000;
+            position: relative;
+            margin-left: 0;
+        }
+
+        .header-content {
+            max-width: 970px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        /* Hide top nav */
+        .nav-links {
+            display: none;
+        }
+
+        .user-menu {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Settings gear button */
+        .settings-gear {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .settings-gear:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .currency-display {
+            display: flex;
+            gap: 5px;
+        }
+
+        .robux-display, .tix-display {
+            background: linear-gradient(135deg, #ff6b00, #ff0000);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .tix-display {
+            background: linear-gradient(135deg, #4169E1, #0000CD);
+        }
+
+        .login-btn, .signup-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .login-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .login-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .signup-btn {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: white;
+        }
+
+        .signup-btn:hover {
+            background: linear-gradient(135deg, #ff3333, #ff0000);
+        }
+
+        /* Console button in top right */
+        .console-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1001;
+            transition: all 0.2s;
+        }
+
+        .console-btn:hover {
+            background: rgba(0,0,0,0.9);
+        }
+
+        .container {
+            max-width: 970px;
+            margin: 0 auto;
+            padding: 15px;
+            margin-left: 0;
+        }
+
+        .section {
+            background: var(--secondary-bg);
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .section-header {
+            background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+            padding: 10px 15px;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        [data-theme="dark"] .section-header {
+            background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+            color: #e0e0e0;
+            border-bottom: 1px solid #555;
+        }
+
+        .section-content {
+            padding: 15px;
+        }
+
+        /* Avatar Viewer */
+        .avatar-viewer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #avatarImage, #profileAvatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-color);
+        }
+
+        .sub-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .sub-tab {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--primary-bg);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .sub-tab.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .sub-content {
+            display: none;
+        }
+
+        .sub-content.active {
+            display: block;
+        }
+
+        /* Item Card Enhancements */
+        .catalog-item {
+            position: relative;
+        }
+
+        .item-menu {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .item-menu:hover {
+            background: var(--accent-color);
+        }
+
+        .context-menu {
+            display: none;
+            position: absolute;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .context-menu ul {
+            list-style: none;
+        }
+
+        .context-menu li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .context-menu li:hover {
+            background: var(--primary-bg);
+        }
+
+        /* Minigames */
+        .minigame-section {
+            margin-bottom: 30px;
+        }
+
+        #crash-multiplier {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        #mines-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .mine-cell {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .mine-cell.revealed {
+            background: #ddd;
+        }
+
+        .mine-cell.mine {
+            background: red;
+        }
+
+        /* Admin Panel Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .admin-tab {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--primary-bg);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .admin-tab.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        /* Auth Panel Styles */
+        .auth-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        .auth-panel-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .auth-panel-header {
+            background: linear-gradient(135deg, #ff0000, #8B0000);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .auth-panel-tabs {
+            display: flex;
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .auth-tab-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .auth-tab-content.active {
+            display: block;
+        }
+
+        /* Settings Modal */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1500;
+        }
+
+        .settings-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .settings-modal-header {
+            background: linear-gradient(135deg, #ff0000, #8B0000);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .settings-tabs {
+            display: flex;
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-tab {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .settings-tab.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .settings-tab-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            border-radius: 4px;
+            background: var(--secondary-bg);
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 3px rgba(255,0,0,0.3);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            background: var(--secondary-bg);
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to bottom, #ff0000, #cc0000);
+            color: white;
+            border-color: #cc0000;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, #ff3333, #ff0000);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-bg);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background: #404040;
+        }
+
+        .close {
+            color: #666;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 5px;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            color: var(--accent-color);
+        }
+
+        /* Game and Catalog Styles */
+        .games-grid, .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .game-card, .catalog-item {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .game-card:hover, .catalog-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(255,0,0,0.3);
+        }
+
+        .game-thumbnail, .item-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .game-info, .item-info {
+            padding: 8px;
+            background: var(--primary-bg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .game-title, .item-name {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 3px;
+            color: var(--text-color);
+        }
+
+        .game-creator, .item-creator {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background-color: var(--secondary-bg);
+            margin: 8% auto;
+            border: 2px solid var(--border-color);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .modal-header {
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            padding: 12px 15px;
+            border-bottom: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .modal-header {
+            background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+            color: #e0e0e0;
+            border-bottom: 1px solid #555;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Exchange rate display */
+        .exchange-rate {
+            background: var(--primary-bg);
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .membership-options {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .membership-option {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+            background: var(--secondary-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .membership-option:hover {
+            border-color: var(--accent-color);
+        }
+
+        .membership-option.selected {
+            border-color: var(--accent-color);
+            background: rgba(255,0,0,0.1);
+        }
+
+        .membership-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .membership-benefits {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .privacy-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--primary-bg);
+            border-radius: 4px;
+        }
+
+        .privacy-label {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .privacy-select {
+            width: auto;
+            min-width: 150px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ff0000, #8B0000);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .owner-badge {
+            background: linear-gradient(135deg, #ffd700, #ffb000);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .membership-badge {
+            background: linear-gradient(135deg, #4169E1, #0000CD);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .badge-item {
+            display: inline-block;
+            background: #ddd;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                left: -200px;
+            }
+            
+            .games-grid, .catalog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .auth-panel-content, .settings-modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="default">
+    <!-- Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="#" onclick="showPage('home')" class="active">Home</a></li>
+            <li><a href="#" onclick="showPage('games')">Games</a></li>
+            <li><a href="#" onclick="showPage('catalog')">Catalog</a></li>
+            <li><a href="#" onclick="showPage('avatar')">Avatar</a></li>
+            <li><a href="#" onclick="showPage('profile')">Profile</a></li>
+            <li><a href="#" onclick="showPage('minigames')">Minigames</a></li>
+            <li><a href="#" onclick="showPage('develop')">Develop</a></li>
+            <li><a href="#" onclick="showPage('groups')">Groups</a></li>
+            <li><a href="#" onclick="showPage('admin')" id="adminNav" class="hidden">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Console Button -->
+    <button class="console-btn" onclick="openAuthPanel()">Console</button>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">ALUCARD</div>
+            <nav>
+                <ul class="nav-links">
+                    <!-- Hidden, sidebar used instead -->
+                </ul>
+            </nav>
+            <div class="user-menu" id="userMenu">
+                <div class="currency-display hidden" id="currencyDisplay">
+                    <div class="robux-display" id="robuxDisplay">R$ 0</div>
+                    <div class="tix-display" id="tixDisplay">Tix 0</div>
+                </div>
+                <button class="settings-gear hidden" id="settingsGear" onclick="openSettingsModal()" title="Settings">⚙️</button>
+                <button class="login-btn" onclick="openModal('loginModal')">Log In</button>
+                <button class="signup-btn" onclick="openModal('signupModal')">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="home" class="page active">
+            <div class="section">
+                <div class="section-header">Welcome to Alucard</div>
+                <div class="section-content">
+                    <p>Welcome to Alucard, the ultimate place to play, chat, and hang out with your friends. Join millions of players and discover an infinite variety of immersive experiences created by our global community!</p>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-header">Featured Experiences</div>
+                <div class="section-content">
+                    <p style="text-align: center; color: #666; padding: 20px;">No games available yet. Check back soon!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="games" class="page">
+            <div class="section">
+                <div class="section-header">Games</div>
+                <div class="section-content">
+                    <p style="text-align: center; color: #666; padding: 40px;">No games available at the moment. Stay tuned for exciting experiences!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="catalog" class="page">
+            <div class="section">
+                <div class="section-header">Catalog</div>
+                <div class="section-content">
+                    <div class="catalog-grid" id="catalogItems">
+                        <!-- Catalog items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="avatar" class="page">
+            <div class="section">
+                <div class="section-header">Avatar Editor</div>
+                <div class="section-content">
+                    <div class="avatar-viewer">
+                        <img id="avatarImage" src="https://via.placeholder.com/200x200/333/fff?text=Avatar" alt="Avatar">
+                    </div>
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" onclick="showSubTab('heads')">Heads</button>
+                        <button class="sub-tab" onclick="showSubTab('faces')">Faces</button>
+                        <button class="sub-tab" onclick="showSubTab('tshirts')">T-Shirts</button>
+                        <button class="sub-tab" onclick="showSubTab('shirts')">Shirts</button>
+                        <button class="sub-tab" onclick="showSubTab('pants')">Pants</button>
+                        <button class="sub-tab" onclick="showSubTab('gear')">Gear</button>
+                        <button class="sub-tab" onclick="showSubTab('hats')">Accessories Hats</button>
+                        <button class="sub-tab" onclick="showSubTab('hair')">Hair</button>
+                        <button class="sub-tab" onclick="showSubTab('face')">Face</button>
+                        <button class="sub-tab" onclick="showSubTab('neck')">Neck</button>
+                        <button class="sub-tab" onclick="showSubTab('shoulder')">Shoulder</button>
+                        <button class="sub-tab" onclick="showSubTab('front')">Front</button>
+                        <button class="sub-tab" onclick="showSubTab('back')">Back</button>
+                        <button class="sub-tab" onclick="showSubTab('waist')">Waist</button>
+                        <button class="sub-tab" onclick="showSubTab('torsos')">Torsos</button>
+                        <button class="sub-tab" onclick="showSubTab('l-arms')">L Arms</button>
+                        <button class="sub-tab" onclick="showSubTab('r-arms')">R Arms</button>
+                        <button class="sub-tab" onclick="showSubTab('l-legs')">L Legs</button>
+                        <button class="sub-tab" onclick="showSubTab('r-legs')">R Legs</button>
+                        <button class="sub-tab" onclick="showSubTab('packages')">Packages</button>
+                    </div>
+                    <div id="subHeads" class="sub-content active">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subFaces" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subTshirts" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subShirts" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subPants" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subGear" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subHats" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subHair" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subFace" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subNeck" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subShoulder" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subFront" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subBack" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subWaist" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subTorsos" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subL-arms" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subR-arms" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subL-legs" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subR-legs" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                    <div id="subPackages" class="sub-content">
+                        <div class="catalog-grid">
+                            <!-- Items loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="create-item" class="page">
+    <div class="section">
+        <div class="section-header">Create Catalog Item</div>
+        <div class="section-content">
+            <form id="userCreateItemForm">
+                <!-- Same as admin form -->
+                <div class="form-group"><label>Name:</label><input type="text" id="userItemName"></div>
+                <!-- ... other fields -->
+                <button type="submit" class="btn btn-primary">Submit for Review</button>
+            </form>
+        </div>
+    </div>
+</div>
+        <div id="profile" class="page">
+            <div class="section">
+                <div class="section-header">Profile</div>
+                <div class="section-content">
+                    <div class="avatar-viewer">
+                        <img id="profileAvatar" src="https://via.placeholder.com/200x200/333/fff?text=Avatar" alt="Profile Avatar">
+                    </div>
+                    <h3 id="profileName">User</h3>
+                    <div id="badges">
+                        <span class="badge-item">Approved!</span>
+                    </div>
+                    <p>Friends: <span id="friendsCount">0</span></p>
+                    <p>Followers: <span id="followersCount">0</span></p>
+                    <p>RAP: <span id="rap">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="minigames" class="page">
+            <div class="section">
+                <div class="section-header">Minigames</div>
+                <div class="section-content">
+                    <div class="minigame-section">
+                        <h3>Rocket Crash</h3>
+                        <p>Cost: 5 Robux or 50 Tix. Earn up to 10,000 Tix!</p>
+                        <div id="crash-multiplier">1.00x</div>
+                        <button class="btn btn-primary" onclick="startCrashGame()">Play</button>
+                        <button id="cashoutBtn" class="btn btn-secondary" disabled onclick="cashOutCrash()">Cash Out</button>
+                        <p id="crashStatus"></p>
+                    </div>
+                    <div class="minigame-section">
+                        <h3>Mines</h3>
+                        <p>Cost: 5 Robux or 50 Tix. Pick safe tiles!</p>
+                        <button class="btn btn-primary" onclick="startMinesGame()">Play</button>
+                        <div id="mines-grid"></div>
+                        <p id="minesStatus"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="develop" class="page">
+            <div class="section">
+                <div class="section-header">Develop</div>
+                <div class="section-content">
+                    <p>Create amazing experiences with Alucard Studio!</p>
+                    <button class="btn btn-primary">Download Alucard Studio</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="groups" class="page">
+            <div class="section">
+                <div class="section-header">Groups</div>
+                <div class="section-content">
+                    <p>Join groups to meet other players and participate in group activities!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin" class="page">
+            <div class="section">
+                <div class="section-header">Admin Panel</div>
+                <div class="section-content">
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" onclick="showAdminTab('applications')">Applications</button>
+                        <button class="admin-tab" onclick="showAdminTab('create-item')">Create Item</button>
+                        <button class="admin-tab" onclick="showAdminTab('ban-users')">Ban Users</button>
+                        <button class="admin-tab" onclick="showAdminTab('moderate-items')">Moderate Items</button>
+                        <button class="admin-tab" onclick="showAdminTab('commands')">Commands</button>
+                    </div>
+                    <div id="adminApplications" class="admin-content active">
+                        <div id="applicationsList"></div>
+                    </div>
+                    <div id="adminCreateItem" class="admin-content">
+                        <form id="createItemForm">
+                            <div class="form-group"><label>Name:</label><input type="text" id="itemName"></div>
+                            <div class="form-group"><label>Description:</label><textarea id="itemDesc"></textarea></div>
+                            <div class="form-group"><label>Price:</label><input type="number" id="itemPrice"></div>
+                            <div class="form-group"><label>Type:</label><select id="itemType"><option value="hat">Hat</option><option value="shirt">Shirt</option><option value="pants">Pants</option><option value="gear">Gear</option><option value="hair">Hair</option><option value="face">Face</option><option value="neck">Neck</option><option value="shoulder">Shoulder</option><option value="front">Front</option><option value="back">Back</option><option value="waist">Waist</option><option value="torsos">Torsos</option><option value="l-arms">L Arms</option><option value="r-arms">R Arms</option><option value="l-legs">L Legs</option><option value="r-legs">R Legs</option><option value="packages">Packages</option><option value="heads">Heads</option><option value="faces">Faces</option><option value="tshirts">T-Shirts</option></select></div>
+                            <div class="form-group"><label>Image:</label><input type="file" id="itemImage" accept="image/*"></div>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </form>
+                    </div>
+                    <div id="adminBanUsers" class="admin-content">
+                        <div id="usersList"></div>
+                    </div>
+                    <div id="adminModerateItems" class="admin-content">
+                        <div id="pendingItemsList"></div>
+                    </div>
+                    <div id="adminCommands" class="admin-content">
+                        <div class="form-group">
+                            <input type="text" id="commandInput" placeholder="/give @user 100 robux">
+                            <button class="btn btn-primary" onclick="executeCommand()">Execute</button>
+                        </div>
+                        <div id="commandOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Panel (Console) -->
+    <div id="authPanel" class="auth-panel">
+        <div class="auth-panel-content">
+            <div class="auth-panel-header">
+                <span>Alucard Console</span>
+                <button class="close" onclick="closeAuthPanel()">&times;</button>
+            </div>
+            <div class="auth-panel-tabs">
+                <button class="auth-tab active" onclick="showAuthTab('exchange')">Currency Exchange</button>
+                <button class="auth-tab" onclick="showAuthTab('promocodes')">Promocodes</button>
+                <button class="auth-tab" onclick="showAuthTab('membership')">Membership</button>
+            </div>
+            
+            <!-- Currency Exchange Tab -->
+            <div id="exchangeTab" class="auth-tab-content active">
+                <h3>Currency Exchange</h3>
+                <div class="exchange-rate">
+                    <strong>Exchange Rate:</strong> 1 Robux = 10 Tix<br>
+                    <small>Minimum: 1 Robux or 10 Tix</small>
+                </div>
+                <div id="exchangeAlert"></div>
+                <form id="exchangeForm">
+                    <div class="form-group">
+                        <label>From Currency:</label>
+                        <select id="fromCurrency" onchange="updateExchangePreview()">
+                            <option value="robux">Robux</option>
+                            <option value="tix">Tix</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount:</label>
+                        <input type="number" id="exchangeAmount" min="1" oninput="updateExchangePreview()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>You will receive:</label>
+                        <input type="text" id="exchangePreview" readonly>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Exchange</button>
+                </form>
+            </div>
+
+            <!-- Promocodes Tab -->
+            <div id="promocodesTab" class="auth-tab-content">
+                <h3>Redeem Promocode</h3>
+                <div id="promocodeAlert"></div>
+                <form id="promocodeForm">
+                    <div class="form-group">
+                        <label>Promocode:</label>
+                        <input type="text" id="promocodeInput" placeholder="Enter promocode..." required>
+                        <small>Available codes: RELEASE, ALUCARD</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Redeem</button>
+                </form>
+            </div>
+
+            <!-- Membership Tab -->
+            <div id="membershipTab" class="auth-tab-content">
+                <h3>Membership Types</h3>
+                <div id="membershipAlert"></div>
+                <div class="membership-options">
+                    <div class="membership-option" onclick="selectMembership('BC')">
+                        <div class="membership-title">Builders Club (BC)</div>
+                        <div class="membership-benefits">50 Robux per day • Cost: 100 Robux</div>
+                    </div>
+                    <div class="membership-option" onclick="selectMembership('TBC')">
+                        <div class="membership-title">Turbo Builders Club (TBC)</div>
+                        <div class="membership-benefits">125 Robux per day • Cost: 200 Robux</div>
+                    </div>
+                    <div class="membership-option" onclick="selectMembership('OBC')">
+                        <div class="membership-title">Outrageous Builders Club (OBC)</div>
+                        <div class="membership-benefits">200 Robux per day • Cost: 500 Robux</div>
+                    </div>
+                </div>
+                <button id="upgradeMembershipBtn" class="btn btn-primary" onclick="upgradeMembership()" disabled>Select a membership type</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="settings-modal">
+        <div class="settings-modal-content">
+            <div class="settings-modal-header">
+                <span>Settings</span>
+                <button class="close" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            <div class="settings-tabs">
+                <button class="settings-tab active" onclick="showSettingsTab('account')">Account Info</button>
+                <button class="settings-tab" onclick="showSettingsTab('security')">Security</button>
+                <button class="settings-tab" onclick="showSettingsTab('privacy')">Privacy</button>
+            </div>
+            
+            <!-- Account Info Tab -->
+            <div id="accountTab" class="settings-tab-content active">
+                <h3>Account Information</h3>
+                <div id="accountAlert"></div>
+                
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="currentUsername" readonly>
+                    <button class="btn btn-secondary" onclick="showUsernameChange()">Change Username (500 R$)</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="currentEmail" value="alucard@random.lol" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" value="********" readonly>
+                    <button class="btn btn-secondary" onclick="showPasswordChange()">Change Password</button>
+                </div>
+
+                <h4>Extensions</h4>
+                <div class="form-group">
+                    <label>Website Theme:</label>
+                    <select id="themeSelect" onchange="changeTheme()">
+                        <option value="default">Default</option>
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                    </select>
+                </div>
+
+                <!-- Username Change Form -->
+                <div id="usernameChangeForm" class="hidden">
+                    <hr>
+                    <h4>Change Username</h4>
+                    <div class="form-group">
+                        <label>New Username:</label>
+                        <input type="text" id="newUsername" minlength="3" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Password:</label>
+                        <input type="password" id="usernamePassword">
+                    </div>
+                    <button class="btn btn-primary" onclick="changeUsername()">Change (500 R$)</button>
+                    <button class="btn btn-secondary" onclick="cancelUsernameChange()">Cancel</button>
+                </div>
+
+                <!-- Password Change Form -->
+                <div id="passwordChangeForm" class="hidden">
+                    <hr>
+                    <h4>Change Password</h4>
+                    <div class="form-group">
+                        <label>Current Password:</label>
+                        <input type="password" id="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password:</label>
+                        <input type="password" id="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password:</label>
+                        <input type="password" id="confirmNewPassword">
+                    </div>
+                    <button class="btn btn-primary" onclick="changePassword()">Change Password</button>
+                    <button class="btn btn-secondary" onclick="cancelPasswordChange()">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="securityTab" class="settings-tab-content">
+                <h3>Security</h3>
+                <div id="securityAlert"></div>
+                
+                <div class="form-group">
+                    <label>Two-Factor Authentication:</label>
+                    <button class="btn btn-secondary">Enable 2FA (Coming Soon)</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Session Management:</label>
+                    <button class="btn btn-primary" onclick="secureSignOut()">Secure Sign Out</button>
+                    <small>Signs out of all other sessions</small>
+                </div>
+            </div>
+
+            <!-- Privacy Tab -->
+            <div id="privacyTab" class="settings-tab-content">
+                <h3>Privacy Settings</h3>
+                <div id="privacyAlert"></div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Who can message me:</span>
+                    <select class="privacy-select" id="messagesPrivacy">
+                        <option value="Everyone">Everyone</option>
+                        <option value="Friends and Followers">Friends and Followers</option>
+                        <option value="Friends">Friends</option>
+                        <option value="No One">No One</option>
+                    </select>
+                </div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Who can invite me to VIP Servers:</span>
+                    <select class="privacy-select" id="vipInvitesPrivacy">
+                        <option value="Everyone">Everyone</option>
+                        <option value="Friends and Followers">Friends and Followers</option>
+                        <option value="Friends">Friends</option>
+                        <option value="No One">No One</option>
+                    </select>
+                </div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Who can follow me into games:</span>
+                    <select class="privacy-select" id="followGamePrivacy">
+                        <option value="Everyone">Everyone</option>
+                        <option value="Friends and Followers">Friends and Followers</option>
+                        <option value="Friends">Friends</option>
+                        <option value="No One">No One</option>
+                    </select>
+                </div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Who can see my inventory:</span>
+                    <select class="privacy-select" id="inventoryPrivacy">
+                        <option value="Everyone">Everyone</option>
+                        <option value="Friends and Followers">Friends and Followers</option>
+                        <option value="Friends">Friends</option>
+                        <option value="No One">No One</option>
+                    </select>
+                </div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Who can trade with me:</span>
+                    <select class="privacy-select" id="tradePrivacy">
+                        <option value="Everyone">Everyone</option>
+                        <option value="Friends and Followers">Friends and Followers</option>
+                        <option value="Friends">Friends</option>
+                        <option value="No One">No One</option>
+                    </select>
+                </div>
+                
+                <div class="privacy-setting">
+                    <span class="privacy-label">Trade quality filter:</span>
+                    <select class="privacy-select" id="tradeQualityPrivacy">
+                        <option value="None">None</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" onclick="savePrivacySettings()">Save Privacy Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Log In to Alucard</span>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlert"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Username or Email:</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('loginModal')">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Join Alucard</span>
+                <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="signupAlert"></div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupUsername">Username (3-20 characters):</label>
+                        <input type="text" id="signupUsername" minlength="3" maxlength="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password:</label>
+                        <input type="password" id="signupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationReason">Why do you want to join Alucard?</label>
+                        <textarea id="applicationReason" rows="4" placeholder="Tell us why you'd like to be part of our community..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('signupModal')">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let isAdmin = false;
+        let isOwner = false;
+        let selectedMembershipType = null;
+        let sidebarOpen = false;
+        let currentSubTab = 'heads';
+        let crashInterval;
+        let crashMultiplier = 1.00;
+        let crashBet = 0;
+        let crashCurrency = 'robux';
+        let minesGrid = [];
+        let minesRevealed = 0;
+        let minesNumMines = 3;
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+            sidebarOpen = !sidebarOpen;
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+            const navLink = document.querySelector(`.sidebar a[onclick*="'${pageId}'"]`);
+            if (navLink) navLink.classList.add('active');
+
+            if (pageId === 'catalog') loadCatalog();
+            if (pageId === 'avatar') loadAvatarSubTab(currentSubTab);
+            if (pageId === 'profile') loadProfile();
+            if (pageId === 'admin' && (isAdmin || isOwner)) {
+                loadApplications();
+                loadUsersForBan();
+                loadPendingItems();
+            }
+        }
+
+        // Sub tabs for avatar
+        function showSubTab(tab) {
+            currentSubTab = tab;
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.sub-content').forEach(c => c.classList.remove('active'));
+            const subId = `sub${tab.charAt(0).toUpperCase() + tab.slice(1).replace(/-[a-z]/g, match => ' ' + match[1].toUpperCase())}`;
+            const subContent = document.getElementById(subId.replace(' ', ''));
+            if (subContent) subContent.classList.add('active');
+            loadAvatarSubTab(tab);
+        }
+
+        async function loadAvatarSubTab(tab) {
+            try {
+                const response = await fetch(`/api/catalog?type=${tab}`);
+                const items = await response.json();
+                const subContents = document.querySelectorAll('.sub-content');
+                let targetGrid = null;
+                subContents.forEach(content => {
+                    if (content.classList.contains('active')) {
+                        targetGrid = content.querySelector('.catalog-grid');
+                    }
+                });
+                if (!targetGrid) targetGrid = document.querySelector('.sub-content.active .catalog-grid');
+                if (targetGrid) {
+                    targetGrid.innerHTML = '';
+                    items.forEach(item => renderItemCard(item, targetGrid));
+                }
+            } catch (e) {
+                console.error('Error loading avatar items:', e);
+            }
+        }
+
+        // Load catalog
+        async function loadCatalog() {
+            try {
+                const response = await fetch('/api/catalog');
+                const items = await response.json();
+                const grid = document.getElementById('catalogItems');
+                grid.innerHTML = '';
+                items.forEach(item => renderItemCard(item, grid));
+            } catch (e) {
+                console.error('Error loading catalog:', e);
+            }
+        }
+
+        function renderItemCard(item, container) {
+            const card = document.createElement('div');
+            card.className = 'catalog-item';
+            card.innerHTML = `
+                <div class="item-menu" onclick="showItemMenu(${item.id}, event)">⋮</div>
+                <img class="item-image" src="${item.image_url || 'https://via.placeholder.com/160x100?text=' + item.name}" alt="${item.name}">
+                <div class="item-info">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-creator">By ${item.creator_username || 'Unknown'}</div>
+                    <div class="item-price">${item.price} ${item.currency_type.toUpperCase()}</div>
+                </div>
+            `;
+            card.onclick = (e) => { if (!e.target.classList.contains('item-menu')) buyItem(item.id); };
+            container.appendChild(card);
+        }
+
+        function showItemMenu(itemId, event) {
+            // Simple alert for demo
+            const menuOptions = currentUser && 'owned' ? 'Report, Sell' : 'Report';
+            alert(`Item menu for ${itemId}: ${menuOptions}`);
+        }
+
+        async function buyItem(itemId) {
+            if (!currentUser) return alert('Login required');
+            try {
+                const response = await fetch('/api/catalog/buy', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ itemId })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Purchased!');
+                    loadCatalog();
+                    updateUserBalance();
+                } else {
+                    alert(data.error);
+                }
+            } catch (e) { alert('Error'); }
+        }
+
+        async function loadProfile() {
+            if (!currentUser) return;
+            document.getElementById('profileName').textContent = currentUser.username;
+            document.getElementById('profileAvatar').src = currentUser.avatar_data || 'https://via.placeholder.com/200?text=' + currentUser.username.charAt(0);
+            // Fetch counts
+            try {
+                const friendsRes = await fetch('/api/friends', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+                const friends = await friendsRes.json();
+                document.getElementById('friendsCount').textContent = friends.length || 0;
+
+                // Followers and RAP - placeholders
+                document.getElementById('followersCount').textContent = 0;
+                document.getElementById('rap').textContent = 0;
+            } catch (e) {
+                console.error('Error loading profile:', e);
+            }
+            // Badges
+            const badgesDiv = document.getElementById('badges');
+            badgesDiv.innerHTML = '<span class="badge-item">Approved!</span>';
+            if (isAdmin) badgesDiv.innerHTML += '<span class="badge-item">Admin</span>';
+            if (isOwner) badgesDiv.innerHTML += '<span class="badge-item">Owner</span>';
+        }
+
+        // Minigames - simplified
+        function startCrashGame() {
+            if (!currentUser) return alert('Login required');
+            crashMultiplier = 1.00;
+            document.getElementById('crash-multiplier').textContent = '1.00x';
+            document.getElementById('cashoutBtn').disabled = false;
+            document.getElementById('crashStatus').textContent = 'Game started! Cash out anytime.';
+            crashInterval = setInterval(() => {
+                crashMultiplier += 0.01;
+                document.getElementById('crash-multiplier').textContent = crashMultiplier.toFixed(2) + 'x';
+                if (Math.random() < 0.02) {
+                    clearInterval(crashInterval);
+                    document.getElementById('cashoutBtn').disabled = true;
+                    document.getElementById('crashStatus').textContent = 'Crashed! Better luck next time.';
+                    // Deduct bet via API
+                }
+            }, 100);
+        }
+
+        function cashOutCrash() {
+            clearInterval(crashInterval);
+            const win = Math.floor(50 * crashMultiplier); // Example
+            document.getElementById('crashStatus').textContent = `Cashed out at ${crashMultiplier.toFixed(2)}x! Won ${win} Tix.`;
+            document.getElementById('cashoutBtn').disabled = true;
+            // Add winnings via API
+        }
+
+        function startMinesGame() {
+            if (!currentUser) return alert('Login required');
+            document.getElementById('minesStatus').textContent = 'Game started! Click cells to reveal.';
+            // Generate grid with mines, etc. - simplified
+            alert('Mines game - implement full logic');
+        }
+
+        // Admin functions
+        function showAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.admin-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('admin' + tabName.charAt(0).toUpperCase() + tabName.slice(1).replace('-', ''))?.classList.add('active');
+        }
+
+        async function loadUsersForBan() {
+            if (!isAdmin && !isOwner) return;
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const users = await response.json();
+                const list = document.getElementById('usersList');
+                list.innerHTML = users.map(user => `
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border-color);">
+                        ${user.username} <button class="btn btn-secondary" onclick="banUser(${user.id})">Ban</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Error loading users:', e);
+            }
+        }
+
+        async function loadPendingItems() {
+            if (!isAdmin && !isOwner) return;
+            try {
+                const response = await fetch('/api/admin/pending-items', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const items = await response.json();
+                const list = document.getElementById('pendingItemsList');
+                list.innerHTML = items.map(item => `
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border-color);">
+                        ${item.name} <button class="btn btn-primary" onclick="approveItem(${item.id})">Approve</button>
+                        <button class="btn btn-secondary" onclick="denyItem(${item.id})">Deny</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Error loading pending items:', e);
+            }
+        }
+
+        async function banUser(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/ban`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (response.ok) {
+                    loadUsersForBan();
+                    alert('User banned');
+                } else {
+                    alert('Error banning user');
+                }
+            } catch (e) {
+                alert('Error');
+            }
+        }
+
+        async function approveItem(itemId) {
+            try {
+                const response = await fetch(`/api/admin/items/${itemId}/approve`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (response.ok) {
+                    loadPendingItems();
+                    alert('Item approved');
+                } else {
+                    alert('Error approving item');
+                }
+            } catch (e) {
+                alert('Error');
+            }
+        }
+
+        async function denyItem(itemId) {
+            try {
+                const response = await fetch(`/api/admin/items/${itemId}/deny`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (response.ok) {
+                    loadPendingItems();
+                    alert('Item denied');
+                } else {
+                    alert('Error denying item');
+                }
+            } catch (e) {
+                alert('Error');
+            }
+        }
+
+        function executeCommand() {
+            const cmd = document.getElementById('commandInput').value;
+            fetch('/api/admin/command', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: cmd })
+            }).then(res => res.json()).then(data => {
+                document.getElementById('commandOutput').innerHTML += `<p>${data.message}</p>`;
+            }).catch(e => alert('Error executing command'));
+        }
+
+        // Form handlers for admin create item
+        document.getElementById('createItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('itemName').value);
+            formData.append('desc', document.getElementById('itemDesc').value);
+            formData.append('price', document.getElementById('itemPrice').value);
+            formData.append('type', document.getElementById('itemType').value);
+            formData.append('image', document.getElementById('itemImage').files[0]);
+            try {
+                const response = await fetch('/api/admin/items', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    body: formData
+                });
+                const data = await response.json();
+                alert(data.message);
+            } catch (e) {
+                alert('Error creating item');
+            }
+        });
+
+        // Rest of the original JS functions remain the same...
+        // (Modal functions, auth, exchange, etc. - copied from original for completeness)
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            const alertId = modalId === 'loginModal' ? 'loginAlert' : 'signupAlert';
+            document.getElementById(alertId).innerHTML = '';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openAuthPanel() {
+            if (!currentUser) {
+                alert('Please log in first!');
+                return;
+            }
+            document.getElementById('authPanel').style.display = 'block';
+            updateExchangePreview();
+        }
+
+        function closeAuthPanel() {
+            document.getElementById('authPanel').style.display = 'none';
+        }
+
+        function showAuthTab(tabName) {
+            document.querySelectorAll('.auth-tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function openSettingsModal() {
+            if (!currentUser) {
+                alert('Please log in first!');
+                return;
+            }
+            document.getElementById('settingsModal').style.display = 'block';
+            loadUserSettings();
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function showSettingsTab(tabName) {
+            document.querySelectorAll('.settings-tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateExchangePreview() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const amount = parseInt(document.getElementById('exchangeAmount').value) || 0;
+            let preview = '';
+            if (fromCurrency === 'robux') {
+                preview = `${amount * 10} Tix`;
+            } else {
+                preview = `${Math.floor(amount / 10)} Robux`;
+            }
+            document.getElementById('exchangePreview').value = preview;
+        }
+
+        function selectMembership(type) {
+            selectedMembershipType = type;
+            document.querySelectorAll('.membership-option').forEach(option => option.classList.remove('selected'));
+            event.target.classList.add('selected');
+            const upgradeBtn = document.getElementById('upgradeMembershipBtn');
+            upgradeBtn.textContent = `Upgrade to ${type}`;
+            upgradeBtn.disabled = false;
+        }
+
+        async function upgradeMembership() {
+            if (!selectedMembershipType) return;
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/membership/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ membershipType: selectedMembershipType })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('membershipAlert', data.message, 'success');
+                    updateUserBalance();
+                    currentUser.membership_type = selectedMembershipType;
+                    updateUserInterface();
+                } else {
+                    showAlert('membershipAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('membershipAlert', 'Connection error. Please try again.');
+            }
+        }
+
+        async function loadUserSettings() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/settings', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (response.ok) {
+                    const settings = await response.json();
+                    document.getElementById('currentUsername').value = settings.username;
+                    document.getElementById('themeSelect').value = settings.theme || 'default';
+                    if (settings.privacy) {
+                        document.getElementById('messagesPrivacy').value = settings.privacy.messages || 'Everyone';
+                        // ... other privacy settings
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+            }
+        }
+
+        function showUsernameChange() {
+            document.getElementById('usernameChangeForm').classList.remove('hidden');
+        }
+
+        function cancelUsernameChange() {
+            document.getElementById('usernameChangeForm').classList.add('hidden');
+        }
+
+        function showPasswordChange() {
+            document.getElementById('passwordChangeForm').classList.remove('hidden');
+        }
+
+        function cancelPasswordChange() {
+            document.getElementById('passwordChangeForm').classList.add('hidden');
+        }
+
+        async function changeUsername() {
+            const newUsername = document.getElementById('newUsername').value;
+            const password = document.getElementById('usernamePassword').value;
+            if (!newUsername || !password) return showAlert('accountAlert', 'Please fill in all fields.');
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/settings/username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ newUsername, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('accountAlert', data.message, 'success');
+                    document.getElementById('currentUsername').value = newUsername;
+                    cancelUsernameChange();
+                    updateUserBalance();
+                } else {
+                    showAlert('accountAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('accountAlert', 'Connection error. Please try again.');
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            if (!currentPassword || !newPassword || !confirmPassword) return showAlert('accountAlert', 'Please fill in all fields.');
+            if (newPassword !== confirmPassword) return showAlert('accountAlert', 'New passwords do not match.');
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/settings/password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('accountAlert', data.message, 'success');
+                    cancelPasswordChange();
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                } else {
+                    showAlert('accountAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('accountAlert', 'Connection error. Please try again.');
+            }
+        }
+
+        async function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.setAttribute('data-theme', theme);
+            if (currentUser) {
+                try {
+                    const token = localStorage.getItem('token');
+                    await fetch('/api/user/settings/theme', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ theme })
+                    });
+                } catch (error) {
+                    console.error('Failed to save theme:', error);
+                }
+            }
+        }
+
+        async function savePrivacySettings() {
+            const privacy = {
+                messages: document.getElementById('messagesPrivacy').value,
+                vip_invites: document.getElementById('vipInvitesPrivacy').value,
+                follow_game: document.getElementById('followGamePrivacy').value,
+                inventory: document.getElementById('inventoryPrivacy').value,
+                trade: document.getElementById('tradePrivacy').value,
+                trade_quality: document.getElementById('tradeQualityPrivacy').value
+            };
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/settings/privacy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ privacy })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('privacyAlert', data.message, 'success');
+                } else {
+                    showAlert('privacyAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('privacyAlert', 'Connection error. Please try again.');
+            }
+        }
+
+        function secureSignOut() {
+            if (confirm('This will sign you out of all sessions. Continue?')) {
+                logout();
+                showAlert('securityAlert', 'Signed out of all sessions successfully.', 'success');
+            }
+        }
+
+        function showAlert(containerId, message, type = 'error') {
+            document.getElementById(containerId).innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => document.getElementById(containerId).innerHTML = '', 5000);
+        }
+
+        // Auth handlers
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    currentUser = data.user;
+                    localStorage.setItem('token', data.token);
+                    isAdmin = data.user.is_admin || false;
+                    isOwner = data.user.is_owner || false;
+                    updateUserInterface();
+                    closeModal('loginModal');
+                    showAlert('loginAlert', 'Logged in successfully!', 'success');
+                } else {
+                    showAlert('loginAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'Connection error. Please try again.');
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const applicationReason = document.getElementById('applicationReason').value;
+            if (password !== confirmPassword) return showAlert('signupAlert', 'Passwords do not match!');
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, applicationReason })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    closeModal('signupModal');
+                    alert('Application submitted successfully! Please wait for admin approval.');
+                } else {
+                    showAlert('signupAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('signupAlert', 'Connection error. Please try again.');
+            }
+        });
+
+        document.getElementById('exchangeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = fromCurrency === 'robux' ? 'tix' : 'robux';
+            const amount = parseInt(document.getElementById('exchangeAmount').value);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/currency/exchange', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ fromCurrency, toCurrency, amount })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('exchangeAlert', data.message, 'success');
+                    updateCurrencyDisplay(data.balance.robux, data.balance.tix);
+                    document.getElementById('exchangeAmount').value = '';
+                    updateExchangePreview();
+                } else {
+                    showAlert('exchangeAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('exchangeAlert', 'Connection error. Please try again.');
+            }
+        });
+
+        document.getElementById('promocodeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('promocodeInput').value;
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/promocodes/redeem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ code })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('promocodeAlert', `${data.message} You received ${data.rewards.robux} Robux and ${data.rewards.tix} Tix!`, 'success');
+                    updateCurrencyDisplay(data.balance.robux, data.balance.tix);
+                    document.getElementById('promocodeInput').value = '';
+                } else {
+                    showAlert('promocodeAlert', data.error);
+                }
+            } catch (error) {
+                showAlert('promocodeAlert', 'Connection error. Please try again.');
+            }
+        });
+        
+    document.getElementById('userCreateItemForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    // Append fields
+    try {
+        const response = await fetch('/api/user/items', { // New route below
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            body: formData
+        });
+        const data = await response.json();
+        alert(data.message);
+    } catch (e) { alert('Error'); }
+});
+        function updateUserInterface() {
+            if (!currentUser) return;
+            const userMenu = document.getElementById('userMenu');
+            userMenu.innerHTML = '';
+            const currencyDiv = document.createElement('div');
+            currencyDiv.className = 'currency-display';
+            currencyDiv.innerHTML = `
+                <div class="robux-display" id="robuxDisplay">R$ ${currentUser.robux || 0}</div>
+                <div class="tix-display" id="tixDisplay">Tix ${currentUser.tix || 0}</div>
+            `;
+            const settingsGear = document.createElement('button');
+            settingsGear.className = 'settings-gear';
+            settingsGear.innerHTML = '⚙️';
+            settingsGear.onclick = openSettingsModal;
+            settingsGear.title = 'Settings';
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.style.cssText = 'color: white; margin-right: 10px; display: flex; align-items: center;';
+            welcomeDiv.innerHTML = `Welcome, ${currentUser.username}!`;
+            if (isOwner) {
+                const badge = document.createElement('span');
+                badge.className = 'owner-badge';
+                badge.textContent = 'OWNER';
+                welcomeDiv.appendChild(badge);
+            } else if (isAdmin) {
+                const badge = document.createElement('span');
+                badge.className = 'admin-badge';
+                badge.textContent = 'ADMIN';
+                welcomeDiv.appendChild(badge);
+            }
+            if (currentUser.membership_type && currentUser.membership_type !== 'None') {
+                const membershipBadge = document.createElement('span');
+                membershipBadge.className = 'membership-badge';
+                membershipBadge.textContent = currentUser.membership_type;
+                welcomeDiv.appendChild(membershipBadge);
+            }
+            const logoutBtn = document.createElement('button');
+            logoutBtn.className = 'login-btn';
+            logoutBtn.textContent = 'Logout';
+            logoutBtn.onclick = logout;
+            userMenu.append(currencyDiv, settingsGear, welcomeDiv, logoutBtn);
+            document.getElementById('adminNav').classList.toggle('hidden', !(isAdmin || isOwner));
+            if (currentUser.theme) document.body.setAttribute('data-theme', currentUser.theme);
+        }
+
+        function updateCurrencyDisplay(robux, tix) {
+            const robuxDisplay = document.getElementById('robuxDisplay');
+            const tixDisplay = document.getElementById('tixDisplay');
+            if (robuxDisplay) robuxDisplay.textContent = `R$ ${robux}`;
+            if (tixDisplay) tixDisplay.textContent = `Tix ${tix}`;
+        }
+
+        async function updateUserBalance() {
+            if (!currentUser) return;
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/profile', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (response.ok) {
+                    const user = await response.json();
+                    currentUser = user;
+                    updateCurrencyDisplay(user.robux, user.tix);
+                }
+            } catch (error) {
+                console.error('Failed to update balance:', error);
+            }
+        }
+
+        async function logout() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) await fetch('/api/auth/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+            currentUser = null;
+            isAdmin = false;
+            isOwner = false;
+            localStorage.removeItem('token');
+            const userMenu = document.getElementById('userMenu');
+            userMenu.innerHTML = `
+                <button class="login-btn" onclick="openModal('loginModal')">Log In</button>
+                <button class="signup-btn" onclick="openModal('signupModal')">Sign Up</button>
+            `;
+            document.getElementById('adminNav').classList.add('hidden');
+            showPage('home');
+            closeAuthPanel();
+            closeSettingsModal();
+        }
+
+        async function loadApplications() {
+            if (!isAdmin && !isOwner) return;
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/admin/applications', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (response.ok) {
+                    const applications = await response.json();
+                    displayApplications(applications);
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        function displayApplications(applications) {
+            const container = document.getElementById('applicationsList');
+            container.innerHTML = '';
+            if (applications.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No pending applications.</p>';
+                return;
+            }
+            applications.forEach(app => {
+                const appDiv = document.createElement('div');
+                appDiv.style.cssText = 'background: var(--secondary-bg); border: 1px solid var(--border-color); padding: 15px; margin-bottom: 10px; border-radius: 4px;';
+                appDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <strong>${app.username}</strong>
+                            <div style="font-size: 12px; color: #666;">${app.email}</div>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="processApplication(${app.id}, 'approve')">Approve</button>
+                            <button class="btn btn-secondary" onclick="processApplication(${app.id}, 'deny')">Deny</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; margin-bottom: 5px;">
+                        <strong>Reason:</strong> ${app.application_reason}
+                    </div>
+                    <div style="font-size: 10px; color: #888;">
+                        Applied: ${new Date(app.created_at).toLocaleDateString()}
+                    </div>
+                `;
+                container.appendChild(appDiv);
+            });
+        }
+
+        async function processApplication(applicationId, action) {
+            if (!isAdmin && !isOwner) return;
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/admin/applications/${applicationId}/${action}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    loadApplications();
+                } else {
+                    alert('Failed to process application');
+                }
+            } catch (error) {
+                console.error('Error processing application:', error);
+                alert('Error processing application');
+            }
+        }
+
+        async function checkExistingSession() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            try {
+                const response = await fetch('/api/user/profile', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (response.ok) {
+                    const user = await response.json();
+                    currentUser = user;
+                    isAdmin = user.is_admin || false;
+                    isOwner = user.is_owner || false;
+                    updateUserInterface();
+                } else {
+                    localStorage.removeItem('token');
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
+                localStorage.removeItem('token');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) event.target.style.display = 'none';
+            if (event.target.classList.contains('auth-panel')) closeAuthPanel();
+            if (event.target.classList.contains('settings-modal')) closeSettingsModal();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkExistingSession();
+            updateExchangePreview();
+        });
+    </script>
+</body>
+</html>
